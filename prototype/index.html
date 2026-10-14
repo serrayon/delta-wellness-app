@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CrewAnchor — Interactive Storyboard Prototype</title>
+<style>
+  :root{
+    --bg:#0b1220;
+    --panel:#111a2e;
+    --ink:#0f1115;
+    --paper:#f4f6fb;
+    --accent:#4fb6a6;
+    --accent-2:#e2763a;
+    --danger:#e2543a;
+    --muted:#7c8aa5;
+    --radius:28px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 800px at 50% -10%, #1a2742 0%, #0b1220 60%);
+    color:var(--paper);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 64px;
+  }
+  header{
+    text-align:center;
+    max-width:640px;
+    margin-bottom:28px;
+  }
+  header h1{
+    font-size:1.6rem;
+    margin:0 0 6px;
+    letter-spacing:.01em;
+  }
+  header p{
+    color:var(--muted);
+    font-size:.95rem;
+    line-height:1.5;
+    margin:0;
+  }
+  .persona-tabs{
+    display:flex; gap:8px; margin-bottom:22px;
+    background:#111a2e; border:1px solid #1f2c4a;
+    border-radius:999px; padding:5px;
+  }
+  .ptab{
+    background:transparent; border:none; color:var(--muted);
+    font-size:.8rem; font-weight:700; padding:9px 16px;
+    border-radius:999px; cursor:pointer; transition:background .15s ease, color .15s ease;
+    font-family:inherit;
+  }
+  .ptab.active{ background:var(--accent); color:#0b1220; }
+  .ptab:hover:not(.active){ color:var(--paper); }
+
+  .stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:20px;
+    width:100%;
+    max-width:380px;
+  }
+  .phone{
+    width:340px;
+    max-width:100%;
+    height:680px;
+    background:var(--ink);
+    border-radius:44px;
+    border:10px solid #1c2338;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+    position:relative;
+    overflow:hidden;
+  }
+  .notch{
+    position:absolute;
+    top:0; left:50%;
+    transform:translateX(-50%);
+    width:140px; height:24px;
+    background:#1c2338;
+    border-bottom-left-radius:16px;
+    border-bottom-right-radius:16px;
+    z-index:5;
+  }
+  .screen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  .screen.active{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .status-bar{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 22px 0;
+    font-size:.7rem;
+    color:#8b97b5;
+  }
+  .screen-body{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:20px 22px 24px;
+  }
+
+  /* Panel 1: Trigger */
+  .p1{ background:linear-gradient(160deg,#1a1016,#0d0a0f); }
+  .p1 .alert{
+    background:#2a1016;
+    border:1px solid #5c2130;
+    color:#ff8a7a;
+    padding:12px 14px;
+    border-radius:14px;
+    font-size:.82rem;
+    font-weight:600;
+    margin-top:10px;
+    animation:shake .4s ease;
+  }
+  @keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);} }
+  .p1 .caption{ margin-top:auto; color:#c7a9ae; font-size:.85rem; line-height:1.5; }
+  .heartbeat{
+    width:64px;height:64px;border-radius:50%;
+    background:radial-gradient(circle,#ff6b5e,#8c1f1f);
+    margin:30px auto 0;
+    animation:pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.18);} }
+
+  /* Panel 2: Discovery */
+  .p2{ background:linear-gradient(160deg,#0e1a2b,#0b1220); align-items:center; justify-content:center; }
+  .p2 .logo-wrap{ text-align:center; }
+  .anchor-icon{
+    width:76px;height:76px;margin:0 auto 18px;
+    border-radius:20px;
+    background:linear-gradient(135deg,var(--accent),#2f7a6e);
+    display:flex;align-items:center;justify-content:center;
+    font-size:2rem;
+    box-shadow:0 12px 30px -8px rgba(79,182,166,.6);
+  }
+  .p2 h2{ margin:0 0 6px; font-size:1.3rem; }
+  .p2 .tagline{ color:var(--muted); font-size:.85rem; }
+  .p2 .loading-bar{
+    width:140px;height:4px;background:#1c2b45;border-radius:4px;
+    margin:22px auto 0; overflow:hidden;
+  }
+  .p2 .loading-bar::after{
+    content:'';display:block;height:100%;width:40%;
+    background:var(--accent);
+    animation:load 1.2s ease-in-out infinite;
+  }
+  @keyframes load{ 0%{margin-left:-40%;} 100%{margin-left:100%;} }
+
+  /* Panel 3: Feature selection */
+  .p3{ background:var(--panel); }
+  .p3 h2{ font-size:1.1rem; margin:4px 0 16px; }
+  .big-btn{
+    display:flex; align-items:center; gap:12px;
+    background:#182544; border:1px solid #273761;
+    border-radius:18px; padding:16px 16px;
+    margin-bottom:12px; cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease;
+    color:var(--paper); text-align:left; font-size:.95rem; font-weight:600;
+  }
+  .big-btn .ico{ font-size:1.4rem; }
+  .big-btn:hover{ transform:translateY(-2px); border-color:var(--accent); }
+  .big-btn.primary{ border-color:var(--accent); background:#163229; }
+
+  /* Panel 3b: Wellness Toolkit */
+  .p3b{ background:var(--panel); }
+  .p3b h2{ font-size:1.1rem; margin:2px 0 4px; }
+  .toolkit-back{
+    color:var(--accent); font-size:.8rem; font-weight:700; cursor:pointer;
+    margin-bottom:10px; width:fit-content;
+  }
+  .toolkit-section-label{
+    font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); margin:12px 0 8px;
+  }
+  .toolkit-card{
+    display:flex; align-items:center; gap:12px;
+    background:#182544; border:1px solid #273761;
+    border-radius:14px; padding:10px 12px; margin-bottom:8px;
+    cursor:pointer; transition:border-color .15s ease;
+  }
+  .toolkit-card:hover{ border-color:var(--accent); }
+  .toolkit-ico{ font-size:1.3rem; }
+  .toolkit-title{ font-size:.86rem; font-weight:600; }
+  .toolkit-sub{ font-size:.72rem; color:var(--muted); margin-top:1px; }
+
+  /* Panel 4: Interaction / offline */
+  .p4{ background:linear-gradient(180deg,#0e1526,#0b1220); align-items:center; justify-content:center; text-align:center;}
+  .offline-banner{
+    background:#17311f; color:#7fe3a0; border:1px solid #244f33;
+    font-size:.72rem; font-weight:700; padding:6px 12px; border-radius:999px;
+    display:inline-block; margin-bottom:26px; letter-spacing:.02em;
+  }
+  .breathe-ring{
+    width:150px;height:150px;border-radius:50%;
+    border:3px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto;
+    animation:breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(.78); box-shadow:0 0 0 0 rgba(79,182,166,.25);}
+    50%{ transform:scale(1); box-shadow:0 0 0 20px rgba(79,182,166,0);}
+  }
+  .breathe-ring span{ font-size:.85rem; color:var(--paper); font-weight:600; }
+  .p4 .timer{ margin-top:22px; color:var(--muted); font-size:.8rem; }
+
+  /* Panel 5: Peer connection */
+  .p5{ background:var(--panel); }
+  .p5 h2{ font-size:1rem; margin:4px 0 16px; color:var(--muted); font-weight:600; }
+  .msg-bubble{
+    background:#15304a; border:1px solid #214764;
+    border-radius:16px 16px 16px 4px;
+    padding:14px 16px; font-size:.88rem; line-height:1.5;
+    animation:rise .4s ease;
+  }
+  @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .msg-from{ font-size:.72rem; color:var(--accent); font-weight:700; margin-bottom:6px; }
+  .p5 .counter{ margin-top:16px; text-align:center; color:var(--muted); font-size:.78rem; }
+
+  /* Panel 6: Resolution */
+  .p6{ background:linear-gradient(160deg,#0e1f1a,#0b1220); align-items:center; justify-content:center; text-align:center;}
+  .check{
+    width:70px;height:70px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),#2f7a6e);
+    display:flex;align-items:center;justify-content:center;
+    font-size:2rem; margin:0 auto 18px;
+    animation:pop .4s ease;
+  }
+  @keyframes pop{ from{transform:scale(.5); opacity:0;} to{transform:scale(1); opacity:1;} }
+  .p6 h2{ margin:0 0 8px; font-size:1.2rem; }
+  .p6 p{ color:var(--muted); font-size:.85rem; max-width:220px; margin:0 auto; line-height:1.5; }
+  .p6 .stat{ margin-top:22px; font-size:1.8rem; font-weight:700; color:var(--accent); }
+  .p6 .stat-label{ font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+
+  /* controls */
+  .controls{
+    display:flex; align-items:center; gap:18px;
+    margin-top:4px;
+  }
+  .nav-btn{
+    background:#17213a; border:1px solid #273761; color:var(--paper);
+    width:44px;height:44px;border-radius:50%;
+    font-size:1.1rem; cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s ease;
+  }
+  .nav-btn:hover{ background:#223052; }
+  .nav-btn:disabled{ opacity:.3; cursor:default; }
+  .dots{ display:flex; gap:7px; }
+  .dot{ width:7px;height:7px;border-radius:50%; background:#273761; transition:background .2s ease, transform .2s ease; }
+  .dot.active{ background:var(--accent); transform:scale(1.3); }
+
+  .caption-card{
+    max-width:360px;
+    background:var(--panel);
+    border:1px solid #1f2c4a;
+    border-radius:16px;
+    padding:16px 18px;
+    font-size:.85rem;
+    line-height:1.55;
+    color:#d6dcea;
+  }
+  .caption-card .panel-tag{
+    display:block;
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:6px;
+  }
+  footer{
+    margin-top:36px;
+    color:var(--muted);
+    font-size:.78rem;
+    text-align:center;
+  }
+  footer a{ color:var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CrewAnchor</h1>
+  <p>Three crew members, three different pressures. Switch personas to see how the same anonymous, offline-first product adapts to each one.</p>
+</header>
+
+<div class="persona-tabs">
+  <button class="ptab active" data-persona="fa">Flight Attendant</button>
+  <button class="ptab" data-persona="reserve">Reserve Crew</button>
+  <button class="ptab" data-persona="pilot">Pilot</button>
+</div>
+
+<div class="stage">
+  <div class="phone">
+    <div class="notch"></div>
+
+    <!-- ============ PERSONA: FLIGHT ATTENDANT (Sarah) ============ -->
+
+    <!-- Panel 1: Trigger -->
+    <div class="screen p1 active" data-persona="fa" data-panel="1">
+      <div class="status-bar"><span>9:41</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <div class="heartbeat"></div>
+        <div class="alert">⚠ FLIGHT CANCELLED</div>
+        <div class="alert">⚠ REASSIGNED</div>
+        <div class="alert">⚠ 3-HOUR TARMAC DELAY</div>
+        <div class="caption">Sarah's 12-hour day just became a 16-hour day. Standing in a chaotic galley, her heart rate spikes.</div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Discovery -->
+    <div class="screen p2" data-persona="fa" data-panel="2">
+      <div class="status-bar"><span>9:41</span><span>✈︎ No Service</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="logo-wrap">
+          <div class="anchor-icon">⚓</div>
+          <h2>CrewAnchor</h2>
+          <div class="tagline">100% Anonymous.<br/>Your safety net in the sky.</div>
+          <div class="loading-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Feature selection -->
+    <div class="screen p3" data-persona="fa" data-panel="3">
+      <div class="status-bar"><span>9:42</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <h2>How can we ground you?</h2>
+        <div class="big-btn primary"><span class="ico">🌀</span> IRROPS Grounding</div>
+        <div class="big-btn" id="layoverBtn"><span class="ico">🏨</span> Layover Isolation</div>
+        <div class="big-btn"><span class="ico">🫁</span> Breathe &amp; Box</div>
+      </div>
+    </div>
+
+    <!-- Panel 3b: Wellness Toolkit (Layover Isolation branch, Phase 2) -->
+    <div class="screen p3b" data-persona="fa" data-panel="3b">
+      <div class="status-bar"><span>9:42</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <div class="toolkit-back" id="toolkitBack">← Back</div>
+        <h2>Layover Toolkit</h2>
+        <div class="offline-banner" style="align-self:flex-start;margin-bottom:14px;">Free — no subscription, ever</div>
+
+        <div class="toolkit-section-label">Hotel-Room Workouts</div>
+        <div class="toolkit-card">
+          <div class="toolkit-ico">⚡</div>
+          <div class="toolkit-meta"><div class="toolkit-title">Energy Reset</div><div class="toolkit-sub">15 min · no equipment</div></div>
+        </div>
+        <div class="toolkit-card">
+          <div class="toolkit-ico">🧘</div>
+          <div class="toolkit-meta"><div class="toolkit-title">Low-Impact / Sore Joints</div><div class="toolkit-sub">10 min · no equipment</div></div>
+        </div>
+        <div class="toolkit-card">
+          <div class="toolkit-ico">🌙</div>
+          <div class="toolkit-meta"><div class="toolkit-title">Sleep-Prep Stretch</div><div class="toolkit-sub">12 min · no equipment</div></div>
+        </div>
+
+        <div class="toolkit-section-label">Guided Meditation</div>
+        <div class="toolkit-card">
+          <div class="toolkit-ico">😴</div>
+          <div class="toolkit-meta"><div class="toolkit-title">Jet Lag Reset</div><div class="toolkit-sub">18 min audio</div></div>
+        </div>
+        <div class="toolkit-card">
+          <div class="toolkit-ico">✈️</div>
+          <div class="toolkit-meta"><div class="toolkit-title">Pre-Flight Anxiety</div><div class="toolkit-sub">8 min audio</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 4: Offline interaction -->
+    <div class="screen p4" data-persona="fa" data-panel="4">
+      <div class="status-bar"><span>9:42</span><span>✈︎ No Service</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="offline-banner">Airplane Mode Active — Fully Operational Offline</div>
+        <div class="breathe-ring"><span>Breathe In</span></div>
+        <div class="timer">0:47 remaining</div>
+      </div>
+    </div>
+
+    <!-- Panel 5: Peer connection -->
+    <div class="screen p5" data-persona="fa" data-panel="5">
+      <div class="status-bar"><span>9:44</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <h2>Crew Bulletin</h2>
+        <div class="msg-bubble">
+          <div class="msg-from">Crew-4821 · anonymous</div>
+          Hang in there, crew. 412 of us are delayed right now. We've got this. Safely home soon.
+        </div>
+        <div class="counter">412 crew members checked in tonight</div>
+      </div>
+    </div>
+
+    <!-- Panel 6: Resolution -->
+    <div class="screen p6" data-persona="fa" data-panel="6">
+      <div class="status-bar"><span>9:44</span><span>✈︎ No Service</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="check">✓</div>
+        <h2>Grounded &amp; Ready</h2>
+        <p>Sarah takes a deep breath and steps back into the cabin with a focused, calm posture.</p>
+        <div class="stat">2m 51s</div>
+        <div class="stat-label">Trigger to Operational Readiness</div>
+      </div>
+    </div>
+
+    <!-- ============ PERSONA: RESERVE / ON-CALL CREW (Marcus) ============ -->
+
+    <!-- Panel 1: Trigger -->
+    <div class="screen p1" data-persona="reserve" data-panel="1">
+      <div class="status-bar"><span>11:02</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <div class="heartbeat"></div>
+        <div class="alert">⚠ CALL-OUT: REPORT IN 2HRS</div>
+        <div class="alert">⚠ 4-DAY LAYOVER — UNPLANNED</div>
+        <div class="alert">⚠ UNFAMILIAR CITY</div>
+        <div class="caption">Marcus (Reserve FA) just got pulled for an unplanned 4-day layover, alone, in a city he's never worked before. The isolation sets in fast.</div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Discovery -->
+    <div class="screen p2" data-persona="reserve" data-panel="2">
+      <div class="status-bar"><span>9:10</span><span>📶 Hotel WiFi</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="logo-wrap">
+          <div class="anchor-icon">⚓</div>
+          <h2>CrewAnchor</h2>
+          <div class="tagline">100% Anonymous.<br/>Your safety net in the sky.</div>
+          <div class="loading-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Feature selection -->
+    <div class="screen p3" data-persona="reserve" data-panel="3">
+      <div class="status-bar"><span>9:11</span><span>📶 Hotel WiFi</span></div>
+      <div class="screen-body">
+        <h2>How can we ground you?</h2>
+        <div class="big-btn"><span class="ico">🌀</span> IRROPS Grounding</div>
+        <div class="big-btn primary"><span class="ico">🏨</span> Layover Isolation</div>
+        <div class="big-btn"><span class="ico">🫁</span> Breathe &amp; Box</div>
+      </div>
+    </div>
+
+    <!-- Panel 4: Interaction -->
+    <div class="screen p4" data-persona="reserve" data-panel="4">
+      <div class="status-bar"><span>9:12</span><span>📶 Hotel WiFi</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="offline-banner">Free — no subscription, ever</div>
+        <div class="toolkit-card" style="width:220px;">
+          <div class="toolkit-ico">🌙</div>
+          <div class="toolkit-meta"><div class="toolkit-title">Sleep-Prep Stretch</div><div class="toolkit-sub">Now playing · 12 min</div></div>
+        </div>
+        <div class="timer">7:48 remaining</div>
+      </div>
+    </div>
+
+    <!-- Panel 5: Peer connection -->
+    <div class="screen p5" data-persona="reserve" data-panel="5">
+      <div class="status-bar"><span>9:24</span><span>📶 Hotel WiFi</span></div>
+      <div class="screen-body">
+        <h2>Crew Bulletin</h2>
+        <div class="msg-bubble">
+          <div class="msg-from">Crew-1187 · anonymous</div>
+          Reserve life is rough some weeks. You're not the only one sitting in a hotel room tonight — we've got each other.
+        </div>
+        <div class="counter">89 reserve crew checked in this week</div>
+      </div>
+    </div>
+
+    <!-- Panel 6: Resolution -->
+    <div class="screen p6" data-persona="reserve" data-panel="6">
+      <div class="status-bar"><span>9:26</span><span>📶 Hotel WiFi</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="check">✓</div>
+        <h2>Grounded, Not Alone</h2>
+        <p>Marcus sets the phone down, stretched out and steadier — four days alone just felt a lot less isolating.</p>
+        <div class="stat">12 min</div>
+        <div class="stat-label">Isolation to Grounded</div>
+      </div>
+    </div>
+
+    <!-- ============ PERSONA: PILOT (Captain Reyes) ============ -->
+
+    <!-- Panel 1: Trigger -->
+    <div class="screen p1" data-persona="pilot" data-panel="1">
+      <div class="status-bar"><span>22:40</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <div class="heartbeat"></div>
+        <div class="alert">⚠ WEATHER DIVERSION — CLOSE CALL</div>
+        <div class="alert">⚠ SAFETY REPORT REQUIRED</div>
+        <div class="alert">⚠ POST-INCIDENT ADRENALINE</div>
+        <div class="caption">Captain Reyes just handled a tense weather diversion. Required to file a safety report, he's wired — and privately anxious about how it'll read on his record.</div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Discovery -->
+    <div class="screen p2" data-persona="pilot" data-panel="2">
+      <div class="status-bar"><span>22:41</span><span>✈︎ No Service</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="logo-wrap">
+          <div class="anchor-icon">⚓</div>
+          <h2>CrewAnchor</h2>
+          <div class="tagline">100% Anonymous.<br/>Your safety net in the sky.</div>
+          <div class="loading-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Feature selection -->
+    <div class="screen p3" data-persona="pilot" data-panel="3">
+      <div class="status-bar"><span>22:41</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <h2>How can we ground you?</h2>
+        <div class="big-btn primary"><span class="ico">🔒</span> Post-Incident Decompress</div>
+        <div class="big-btn"><span class="ico">🏨</span> Layover Isolation</div>
+        <div class="big-btn"><span class="ico">🫁</span> Breathe &amp; Box</div>
+      </div>
+    </div>
+
+    <!-- Panel 4: Interaction -->
+    <div class="screen p4" data-persona="pilot" data-panel="4">
+      <div class="status-bar"><span>22:42</span><span>✈︎ No Service</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="offline-banner">Zero-Data Privacy Vault — nothing recorded, ever</div>
+        <div class="breathe-ring"><span>Breathe Out</span></div>
+        <div class="timer">1:10 remaining</div>
+      </div>
+    </div>
+
+    <!-- Panel 5: Peer connection -->
+    <div class="screen p5" data-persona="pilot" data-panel="5">
+      <div class="status-bar"><span>22:44</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <h2>Crew Bulletin</h2>
+        <div class="msg-bubble">
+          <div class="msg-from">Crew-2904 · anonymous</div>
+          Filing a report after a tense one is the right call, every time. Feeling shaken after doesn't mean you did anything wrong.
+        </div>
+        <div class="counter">31 pilots checked in this week</div>
+      </div>
+    </div>
+
+    <!-- Panel 6: Resolution -->
+    <div class="screen p6" data-persona="pilot" data-panel="6">
+      <div class="status-bar"><span>22:46</span><span>✈︎ No Service</span></div>
+      <div class="screen-body" style="justify-content:center;">
+        <div class="check">✓</div>
+        <h2>Clear-Headed &amp; Ready to Report</h2>
+        <p>Captain Reyes feels steady enough now to file a clear, accurate report — with zero record that CrewAnchor was ever involved.</p>
+        <div class="stat">4m 10s</div>
+        <div class="stat-label">Incident to Clear-Headed</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="controls">
+    <button class="nav-btn" id="prevBtn" aria-label="Previous panel">←</button>
+    <div class="dots">
+      <div class="dot active" data-dot="1"></div>
+      <div class="dot" data-dot="2"></div>
+      <div class="dot" data-dot="3"></div>
+      <div class="dot" data-dot="4"></div>
+      <div class="dot" data-dot="5"></div>
+      <div class="dot" data-dot="6"></div>
+    </div>
+    <button class="nav-btn" id="nextBtn" aria-label="Next panel">→</button>
+  </div>
+
+  <div class="caption-card" id="captionCard">
+    <span class="panel-tag">Panel 1 · The Trigger</span>
+    Sarah (Flight Attendant) is standing in a chaotic galley. Her 12-hour day just turned into a 16-hour day. Her heart rate spikes, and she enters an anxiety/panic loop.
+  </div>
+</div>
+
+<footer>
+  Portfolio case study for Delta Air Lines — Product Owner, Reservations.<br/>
+  See <a href="../docs/product-vision.md">product vision</a>, <a href="../docs/mvp-scope.md">MVP scope</a>, and <a href="../docs/backlog.md">full backlog</a>.
+</footer>
+
+<script>
+  const captions = {
+    fa: [
+      { tag: "Panel 1 · The Trigger", text: "Sarah (Flight Attendant) is standing in a chaotic galley. Her 12-hour day just turned into a 16-hour day. Her heart rate spikes, and she enters an anxiety/panic loop." },
+      { tag: "Panel 2 · Discovery & Access", text: "Knowing she only has a 4-minute window before boarding the next leg, she opens a trusted tool built specifically for her lifestyle." },
+      { tag: "Panel 3 · Feature Selection", text: "Sarah taps “IRROPS Grounding,” which instantly tailors her digital experience to handle an active, high-stress scenario. (Tap “Layover Isolation” to see the Wellness Toolkit.)" },
+      { tag: "Panel 4 · The Interaction (Offline Mode)", text: "Without airport Wi-Fi or cellular service on the tarmac, the app successfully guides her through a targeted pacing exercise to lower her cortisol." },
+      { tag: "Panel 5 · The Peer Connection", text: "Sarah instantly feels connected to an authentic community that understands airline life, shattering her feeling of isolation." },
+      { tag: "Panel 6 · The Resolution", text: "In less than 3 minutes, the product pulled the user out of a panic loop, proving its value as an essential operational wellness tool." }
+    ],
+    reserve: [
+      { tag: "Panel 1 · The Trigger", text: "Marcus (Reserve Flight Attendant) gets an unplanned call-out: a 4-day layover, alone, in a city he's never worked. The isolation of reserve life sets in immediately." },
+      { tag: "Panel 2 · Discovery & Access", text: "Alone in the hotel room with nothing but time, he opens the same trusted app he's heard other reserve crew mention." },
+      { tag: "Panel 3 · Feature Selection", text: "Marcus taps “Layover Isolation” — the Phase 2 Wellness Toolkit built specifically for the chronic, not acute, version of this job's stress." },
+      { tag: "Panel 4 · The Interaction", text: "A free, offline-bundled Sleep-Prep Stretch session plays — no subscription, no paywall, the same category of content he'd otherwise pay $15/month for." },
+      { tag: "Panel 5 · The Peer Connection", text: "An anonymous message from another reserve crew member reminds him he's not the only one sitting alone in a hotel room tonight." },
+      { tag: "Panel 6 · The Resolution", text: "Twelve minutes in, Marcus feels steadier — not because the layover got shorter, but because the isolation did." }
+    ],
+    pilot: [
+      { tag: "Panel 1 · The Trigger", text: "Captain Reyes just handled a tense weather diversion. He's required to file a safety report and is privately anxious about how it'll read on his record." },
+      { tag: "Panel 2 · Discovery & Access", text: "Before filing, he opens CrewAnchor — reassured specifically by the “100% Anonymous” promise, which matters more to a pilot than almost anyone else on the crew." },
+      { tag: "Panel 3 · Feature Selection", text: "He selects “Post-Incident Decompress,” a module built around the specific anxiety of FAA/company reporting, not generic stress." },
+      { tag: "Panel 4 · The Interaction", text: "The Zero-Data Privacy Vault is front and center here — the product explicitly confirms nothing about this session is ever recorded, which is the entire reason he trusts it." },
+      { tag: "Panel 5 · The Peer Connection", text: "An anonymous peer message normalizes the aftermath of filing a report — a quiet reassurance he wouldn't get through official channels." },
+      { tag: "Panel 6 · The Resolution", text: "Captain Reyes files a clear, accurate report with a level head — and zero record that CrewAnchor was ever part of the process." }
+    ]
+  };
+
+  let currentPersona = 'fa';
+  let current = 1;
+  const total = 6;
+  const dots = document.querySelectorAll('.dot');
+  const captionCard = document.getElementById('captionCard');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const personaTabs = document.querySelectorAll('.ptab');
+
+  function render(){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.querySelector('.screen[data-persona="' + currentPersona + '"][data-panel="' + current + '"]');
+    if (target) target.classList.add('active');
+    dots.forEach(d => d.classList.toggle('active', Number(d.dataset.dot) === current));
+    const c = captions[currentPersona][current - 1];
+    captionCard.innerHTML = '<span class="panel-tag">' + c.tag + '</span>' + c.text;
+    prevBtn.disabled = current === 1;
+    nextBtn.disabled = current === total;
+  }
+
+  prevBtn.addEventListener('click', () => { if (current > 1) { current--; render(); } });
+  nextBtn.addEventListener('click', () => { if (current < total) { current++; render(); } });
+  dots.forEach(d => d.addEventListener('click', () => { current = Number(d.dataset.dot); render(); }));
+
+  personaTabs.forEach(tab => tab.addEventListener('click', () => {
+    currentPersona = tab.dataset.persona;
+    current = 1;
+    personaTabs.forEach(t => t.classList.toggle('active', t === tab));
+    render();
+  }));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextBtn.click();
+    if (e.key === 'ArrowLeft') prevBtn.click();
+  });
+
+  // Branch into the Phase 2 Wellness Toolkit screen from "Layover Isolation" (FA persona only)
+  const toolkitScreen = document.querySelector('.p3b');
+  const layoverBtn = document.getElementById('layoverBtn');
+  const toolkitBack = document.getElementById('toolkitBack');
+
+  layoverBtn.addEventListener('click', () => {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    toolkitScreen.classList.add('active');
+  });
+
+  toolkitBack.addEventListener('click', () => {
+    toolkitScreen.classList.remove('active');
+    render();
+  });
+
+  render();
+</script>
+
+</body>
+</html>

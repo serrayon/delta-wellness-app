@@ -193,7 +193,14 @@
     border-radius:14px; padding:10px 12px; margin-bottom:8px;
     cursor:pointer; transition:border-color .15s ease;
   }
+  .toolkit-card{ cursor:pointer; }
   .toolkit-card:hover{ border-color:var(--accent); }
+  .toolkit-card.selected{ border-color:var(--accent); background:rgba(79,182,166,.10); }
+  .toolkit-note{
+    margin-top:12px; font-size:.74rem; line-height:1.4; color:var(--muted);
+    border:1px dashed #2a3a5c; border-radius:10px; padding:9px 11px; min-height:2.6em;
+  }
+  .toolkit-note b{ color:var(--paper); }
   .toolkit-ico{ font-size:1.3rem; }
   .toolkit-title{ font-size:.86rem; font-weight:600; }
   .toolkit-sub{ font-size:.72rem; color:var(--muted); margin-top:1px; }
@@ -394,6 +401,7 @@
           <div class="toolkit-ico">✈️</div>
           <div class="toolkit-meta"><div class="toolkit-title">Pre-Flight Anxiety</div><div class="toolkit-sub">8 min audio</div></div>
         </div>
+        <div class="toolkit-note" id="toolkitNote">Tap any item to preview.</div>
       </div>
     </div>
 
@@ -727,6 +735,18 @@
           timer.textContent = 'Session complete';
         }
       }, 1000);
+    });
+  });
+
+  // Wellness Toolkit cards: Phase 2 content isn't built, so a tap shows an honest
+  // "coming in Phase 2" note. Keeps the roadmap consistent and still records the tap.
+  const toolkitNote = document.getElementById('toolkitNote');
+  document.querySelectorAll('.p3b .toolkit-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.p3b .toolkit-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const name = card.querySelector('.toolkit-title').textContent;
+      toolkitNote.innerHTML = '<b>' + name + '</b> launches in Phase 2, once the core breathing loop is validated. See the roadmap.';
     });
   });
 

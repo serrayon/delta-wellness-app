@@ -210,8 +210,15 @@
     border:3px solid var(--accent);
     display:flex;align-items:center;justify-content:center;
     margin:0 auto;
-    animation:breathe 4s ease-in-out infinite;
+    cursor:pointer;
+    transition:transform .2s ease;
   }
+  .breathe-ring:hover{ transform:scale(1.03); }
+  .breathe-ring.breathing{
+    animation:breathe 4s ease-in-out infinite;
+    cursor:default;
+  }
+  .breathe-ring.breathing:hover{ transform:none; }
   @keyframes breathe{
     0%,100%{ transform:scale(.78); box-shadow:0 0 0 0 rgba(79,182,166,.25);}
     50%{ transform:scale(1); box-shadow:0 0 0 20px rgba(79,182,166,0);}
@@ -395,8 +402,8 @@
       <div class="status-bar"><span>9:42</span><span>✈︎ No Service</span></div>
       <div class="screen-body" style="justify-content:center;">
         <div class="offline-banner">Airplane Mode Active — Fully Operational Offline</div>
-        <div class="breathe-ring"><span>Breathe In</span></div>
-        <div class="timer">0:47 remaining</div>
+        <div class="breathe-ring" id="breatheRing"><span id="breatheLabel">Tap to Begin</span></div>
+        <div class="timer" id="breatheTimer">0:47 remaining</div>
       </div>
     </div>
 
@@ -678,6 +685,50 @@
     toolkitScreen.classList.remove('active');
     render();
   });
+
+  // Panel 4: a real, tappable breathing exercise (not just a narrative caption) —
+  // gives behavioral analytics tools (e.g. Clarity) a genuine interaction and
+  // dwell-time signal to observe, instead of only "clicked next."
+  const breatheRing = document.getElementById('breatheRing');
+  const breatheLabel = document.getElementById('breatheLabel');
+  const breatheTimer = document.getElementById('breatheTimer');
+  let breatheInterval = null;
+  let breatheRunning = false;
+
+  function formatTime(totalSeconds){
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function startBreathing(){
+    if (breatheRunning) return;
+    breatheRunning = true;
+    let secondsLeft = 47;
+    let phaseIn = true;
+    breatheRing.classList.add('breathing');
+    breatheLabel.textContent = 'Breathe In';
+    breatheTimer.textContent = `${formatTime(secondsLeft)} remaining`;
+
+    breatheInterval = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft > 0) {
+        breatheTimer.textContent = `${formatTime(secondsLeft)} remaining`;
+        if (secondsLeft % 4 === 0) {
+          phaseIn = !phaseIn;
+          breatheLabel.textContent = phaseIn ? 'Breathe In' : 'Breathe Out';
+        }
+      } else {
+        clearInterval(breatheInterval);
+        breatheRunning = false;
+        breatheRing.classList.remove('breathing');
+        breatheLabel.textContent = 'Complete ✓';
+        breatheTimer.textContent = 'Session complete';
+      }
+    }, 1000);
+  }
+
+  breatheRing.addEventListener('click', startBreathing);
 
   render();
 </script>

@@ -2,7 +2,7 @@
 
 **A 100% anonymous, offline-first mental health and resilience app for airline flight crew.**
 
-Portfolio case study built for Delta Air Lines Product Owner roles. Demonstrates the full product-ownership loop this role requires: translating an operational pain point into product vision, scoping an MVP under real constraints, writing build-ready user stories and acceptance criteria, and defining the metrics that prove it worked.
+Portfolio case study built for Delta Air Lines Product Owner roles. Demonstrates the full product-ownership loop: translating an operational pain point into product vision, scoping an MVP under real constraints, writing build-ready user stories and acceptance criteria, and defining the metrics that prove it worked.
 
 > 🔗 **[Try the interactive prototype →](https://serrayon.github.io/delta-wellness-app/prototype/)**
 > *(If the link isn't live yet, see "Getting Started" below to preview it another way.)*
@@ -63,9 +63,9 @@ All three personas defined in the product vision now have a full 6-panel storybo
 - **Reserve Crew (Marcus)** — unplanned layover isolation → the Phase 2 Wellness Toolkit
 - **Pilot (Captain Reyes)** — post-incident reporting anxiety → the Zero-Data Privacy Vault
 
-## Why This Project, For This Role
+## Why This Project
 
-Delta's technology teams own AI-enabled, data-informed employee and customer digital experiences, including crew-facing platforms. This project applies the same discipline (backlog ownership, build-ready requirements, agile delivery, data-informed prioritization) to a specific internal customer: flight crew. It's built to show the work, not just describe it.
+After eight years as a Southwest flight attendant, I know where crew support tools fall short: they assume signal, time, and a willingness to leave a record. This project applies product-ownership discipline (backlog ownership, build-ready requirements, agile delivery, data-informed prioritization) to that one internal customer group. It's built to show the work, not just describe it.
 
 ## Analytics & Privacy Note
 

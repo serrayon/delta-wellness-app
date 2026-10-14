@@ -33,7 +33,7 @@ Judgment calls (not errors, but worth being ready to defend): the 30%-engagement
 - ~~US-102 cold-start acceptance criterion (500ms) was unrealistic~~ — 2026-10-14: split into a 500ms tap-to-start target once the app is open and a under-3-second cold-launch target on a mid-range device.
 - ~~US-301 and US-303 described moderation separately~~ — 2026-10-14: now one two-stage pipeline (on-device keyword check, then toxicity filter), cross-referenced in both stories.
 - ~~Prototype had no real interaction to measure~~ — 2026-10-14: breathing exercise is now a working timed session (Flight Attendant and Pilot), toolkit cards are tappable, and the demo page is instrumented with Microsoft Clarity.
-- ~~Stale "Product Owner, Reservations" references~~ — 2026-10-14: footer and README reworded to apply to Delta Product Owner roles generally.
+- ~~Stale "Product Owner, Reservations" references~~ — 2026-10-14: footer, README, `okrs.md` and `product-vision.md` reworded so nothing is tied to one specific posting. (An earlier pass missed the `docs/` folder; caught in a later review.)
 - ~~"Nothing recorded" wording could read as contradicting the demo page's analytics~~ — 2026-10-14: scoped the claim to the app, and added a disclosure to the footer and README.
 - ~~GitHub Pages not enabled, live prototype link 404'd~~ — enabled 2026-10-12, confirmed live at `serrayon.github.io/delta-wellness-app/prototype/`
 - ~~Wireframes — style/depth decision~~ — decided 2026-10-12: keep the plain low-fidelity box style as-is, no restyle or annotations needed.

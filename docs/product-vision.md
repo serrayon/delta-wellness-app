@@ -7,7 +7,7 @@ Flight crew (flight attendants and pilots) operate inside a uniquely high-stress
 CrewAnchor is a 100% anonymous, offline-first mental health and resilience tool built specifically for aviation crew — designed to meet a crew member in the exact 2–4 minute window they actually have between boarding calls, deliver immediate grounding support with zero dependency on connectivity, and reconnect them to a peer community that understands the job without ever compromising their anonymity or their employment record.
 
 ## Why This, Why Now
-- Delta's Reservations Experience Design & Technology team is explicitly investing in AI-enabled, automation-driven employee experience tools — CrewAnchor is a direct analog built for the inflight/crew side of that same mission.
+- Crew are an internal customer group that most employee-experience tooling serves poorly. They work offline, on unpredictable schedules, and under constant reporting pressure. CrewAnchor is built for that gap.
 - Delta's own benefits language ("Holistic Wellbeing programs... extensive resources supporting mental health") signals organizational appetite for crew-facing wellness tooling, but EAP-style resources are rarely designed around the operational constraints (offline, anonymous, under 5 minutes) that make a tool actually usable in the moment.
 
 ## Target Users

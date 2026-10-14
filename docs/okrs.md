@@ -1,6 +1,6 @@
 # CrewAnchor — OKRs & Value-Realization Metrics
 
-Demonstrating the ability to connect product vision to measurable outcomes (a listed preferred qualification for the Delta Product Owner, Reservations role).
+Connecting the product vision to measurable outcomes: every key result below is something that could be instrumented and tracked.
 
 ## Objective 1: Prove the "panic-to-grounded" loop works in the real operating environment
 - **KR1:** 70%+ of users who start a grounding exercise complete it (not abandoned before the session timer ends)

@@ -193,6 +193,25 @@
     border-radius:14px; padding:10px 12px; margin-bottom:8px;
     cursor:pointer; transition:border-color .15s ease;
   }
+  .breathe-ring.paused{ animation-play-state:paused; }
+  .breathe-hint{ margin-top:6px; color:var(--muted); font-size:.7rem; opacity:.8; min-height:1em; }
+
+  /* Box Breathing screen */
+  .pbox{ background:var(--panel); }
+  .pbox h2{ font-size:1.1rem; margin:2px 0 6px; }
+  .box-def{ font-size:.76rem; line-height:1.45; color:var(--muted); margin-bottom:14px; }
+  .box-def b{ color:var(--paper); }
+  .box-wrap{ position:relative; width:150px; height:150px; margin:4px auto 10px; cursor:pointer; }
+  .box-edge{ position:absolute; background:#2a3a5c; border-radius:3px; transition:background .25s ease; }
+  .box-edge.on{ background:var(--accent); }
+  .box-edge.top{ top:0; left:0; right:0; height:5px; }
+  .box-edge.bottom{ bottom:0; left:0; right:0; height:5px; }
+  .box-edge.left{ top:0; bottom:0; left:0; width:5px; }
+  .box-edge.right{ top:0; bottom:0; right:0; width:5px; }
+  .box-center{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .box-phase{ font-size:.85rem; font-weight:700; color:var(--paper); }
+  .box-count{ font-size:1.8rem; font-weight:700; color:var(--accent); line-height:1.1; }
+  .box-hint{ text-align:center; color:var(--muted); font-size:.7rem; min-height:1em; }
   .toolkit-card{ cursor:pointer; }
   .toolkit-card:hover{ border-color:var(--accent); }
   .toolkit-card.selected{ border-color:var(--accent); background:rgba(79,182,166,.10); }
@@ -405,6 +424,22 @@
       </div>
     </div>
 
+    <!-- Box Breathing tool (opened from "Breathe & Box" on any persona's panel 3) -->
+    <div class="screen pbox" data-persona="none" data-panel="box">
+      <div class="status-bar"><span>9:42</span><span>✈︎ No Service</span></div>
+      <div class="screen-body">
+        <div class="toolkit-back" id="boxBack">← Back</div>
+        <h2>Box Breathing</h2>
+        <div class="box-def"><b>What it is:</b> a paced breathing pattern in four equal parts. Breathe in for 4, hold for 4, breathe out for 4, hold for 4, then repeat. The even counts give your attention something simple to follow. Works offline; nothing is recorded.</div>
+        <div class="box-wrap" id="boxWrap">
+          <div class="box-edge left"></div><div class="box-edge top"></div>
+          <div class="box-edge right"></div><div class="box-edge bottom"></div>
+          <div class="box-center"><div class="box-phase" id="boxPhase">Tap to Begin</div><div class="box-count" id="boxCount"></div></div>
+        </div>
+        <div class="box-hint" id="boxHint">Tap the box to start. Tap again to pause.</div>
+      </div>
+    </div>
+
     <!-- Panel 4: Offline interaction -->
     <div class="screen p4" data-persona="fa" data-panel="4">
       <div class="status-bar"><span>9:42</span><span>✈︎ No Service</span></div>
@@ -412,6 +447,7 @@
         <div class="offline-banner">Airplane Mode Active — Fully Operational Offline</div>
         <div class="breathe-ring" data-seconds="47"><span>Tap to Begin</span></div>
         <div class="timer">0:47 remaining</div>
+        <div class="breathe-hint">Tap the circle to pause</div>
       </div>
     </div>
 
@@ -561,6 +597,7 @@
         <div class="offline-banner">Zero-Data Privacy Vault — the app records nothing, ever</div>
         <div class="breathe-ring" data-seconds="70"><span>Tap to Begin</span></div>
         <div class="timer">1:10 remaining</div>
+        <div class="breathe-hint">Tap the circle to pause</div>
       </div>
     </div>
 
@@ -704,23 +741,26 @@
     return `${m}:${String(s).padStart(2, '0')}`;
   }
 
-  // Each breathing ring runs its own session; works for every persona that has one.
+  // Each breathing ring runs its own session and can be paused/resumed by tapping it.
   document.querySelectorAll('.breathe-ring').forEach(ring => {
     const label = ring.querySelector('span');
     const timer = ring.parentElement.querySelector('.timer');
+    const hint = ring.parentElement.querySelector('.breathe-hint');
     const total = Number(ring.dataset.seconds) || 47;
-    let running = false;
+    let state = 'idle';            // idle | running | paused | done
+    let secondsLeft = total;
+    let phaseIn = true;
+    let tick = null;
 
-    ring.addEventListener('click', () => {
-      if (running) return;
-      running = true;
-      let secondsLeft = total;
-      let phaseIn = true;
+    function setHint(t){ if (hint) hint.textContent = t; }
+
+    function run(){
+      state = 'running';
       ring.classList.add('breathing');
-      label.textContent = 'Breathe In';
-      timer.textContent = `${formatTime(secondsLeft)} remaining`;
-
-      const tick = setInterval(() => {
+      ring.classList.remove('paused');
+      label.textContent = phaseIn ? 'Breathe In' : 'Breathe Out';
+      setHint('Tap the circle to pause');
+      tick = setInterval(() => {
         secondsLeft--;
         if (secondsLeft > 0) {
           timer.textContent = `${formatTime(secondsLeft)} remaining`;
@@ -730,13 +770,89 @@
           }
         } else {
           clearInterval(tick);
-          running = false;
-          ring.classList.remove('breathing');
+          state = 'done';
+          ring.classList.remove('breathing', 'paused');
           label.textContent = 'Complete ✓';
           timer.textContent = 'Session complete';
+          setHint('Tap the circle to go again');
         }
       }, 1000);
+    }
+
+    ring.addEventListener('click', () => {
+      if (state === 'idle' || state === 'done') {
+        secondsLeft = total; phaseIn = true;
+        timer.textContent = `${formatTime(secondsLeft)} remaining`;
+        run();
+      } else if (state === 'running') {
+        clearInterval(tick);
+        state = 'paused';
+        ring.classList.add('paused');
+        label.textContent = 'Paused';
+        setHint('Tap the circle to resume');
+      } else if (state === 'paused') {
+        run();
+      }
     });
+  });
+
+  // Box Breathing tool: 4s in, 4s hold, 4s out, 4s hold; lights one side of the box per phase.
+  const boxScreen = document.querySelector('.pbox');
+  const boxWrap = document.getElementById('boxWrap');
+  const boxPhase = document.getElementById('boxPhase');
+  const boxCount = document.getElementById('boxCount');
+  const boxHint = document.getElementById('boxHint');
+  const boxEdges = ['left','top','right','bottom'].map(n => boxWrap.querySelector('.box-edge.' + n));
+  const boxPhases = ['Breathe In', 'Hold', 'Breathe Out', 'Hold'];
+  let boxTick = null, boxState = 'idle', boxStep = 0, boxLeft = 4;
+
+  function boxPaint(){
+    boxEdges.forEach((e, i) => e.classList.toggle('on', boxState !== 'idle' && i === boxStep));
+    boxPhase.textContent = boxPhases[boxStep];
+    boxCount.textContent = boxLeft;
+  }
+  function boxRun(){
+    boxState = 'running';
+    boxHint.textContent = 'Tap the box to pause';
+    boxPaint();
+    boxTick = setInterval(() => {
+      boxLeft--;
+      if (boxLeft === 0) { boxStep = (boxStep + 1) % 4; boxLeft = 4; }
+      boxPaint();
+    }, 1000);
+  }
+  function boxReset(){
+    clearInterval(boxTick);
+    boxState = 'idle'; boxStep = 0; boxLeft = 4;
+    boxEdges.forEach(e => e.classList.remove('on'));
+    boxPhase.textContent = 'Tap to Begin'; boxCount.textContent = '';
+    boxHint.textContent = 'Tap the box to start. Tap again to pause.';
+  }
+  boxWrap.addEventListener('click', () => {
+    if (boxState === 'idle') { boxRun(); }
+    else if (boxState === 'running') {
+      clearInterval(boxTick); boxState = 'paused';
+      boxPhase.textContent = 'Paused'; boxHint.textContent = 'Tap the box to resume';
+    } else if (boxState === 'paused') { boxRun(); }
+  });
+
+  document.querySelectorAll('.big-btn').forEach(btn => {
+    if (btn.textContent.includes('Breathe & Box')) {
+      btn.addEventListener('click', () => {
+        boxReset();
+        document.querySelectorAll('.screen').forEach(sc => sc.classList.remove('active'));
+        boxScreen.classList.add('active');
+      });
+    }
+    // The highlighted option is the story path, so tapping it moves the story forward like the arrow does.
+    if (btn.classList.contains('primary')) {
+      btn.addEventListener('click', () => nextBtn.click());
+    }
+  });
+  document.getElementById('boxBack').addEventListener('click', () => {
+    boxReset();
+    boxScreen.classList.remove('active');
+    render();
   });
 
   // Wellness Toolkit cards: Phase 2 content isn't built, so a tap shows an honest

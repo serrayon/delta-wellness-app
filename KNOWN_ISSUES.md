@@ -8,7 +8,8 @@ Tracked here so nothing has to be rediscovered by stumbling into it.
 
 ## Known Limitations (by design, not bugs — noting so they're not mistaken for gaps)
 
-- The prototype is a static, scripted demo — tapping through shows the intended flow, but nothing is wired to real audio/video content, a backend, or real data. This is expected for a portfolio concept piece, not a shipped product.
+- The prototype is mostly a scripted walkthrough. Two things are genuinely interactive: the breathing exercise (Flight Attendant and Pilot, panel 4) runs a real timed session, and the Wellness Toolkit cards respond to taps with a "launches in Phase 2" note. Everything else is narrative, and nothing is wired to real audio/video content, a backend, or real data. Expected for a portfolio concept piece, not a shipped product.
+- Analytics on the demo page (Microsoft Clarity) will only reflect a handful of visitors, so any observation drawn from it is anecdotal, not statistically meaningful. The app concept's zero-data promise also means true DAU/retention tracking is deliberately not possible; usage would be measured as aggregate event counts only.
 - Wireframes (`wireframes/index.html`) currently cover only the Flight Attendant persona's core flow. The Reserve Crew and Pilot storyboards exist in the high-fidelity prototype but don't have a corresponding low-fi wireframe pass.
 - Tested in Chromium only. Not verified on Safari/Firefox or real mobile devices — likely fine given it's plain CSS/JS with no exotic APIs, but not confirmed.
 
@@ -31,6 +32,9 @@ Judgment calls (not errors, but worth being ready to defend): the 30%-engagement
 
 ## Resolved
 
+- ~~Prototype had no real interaction to measure~~ — 2026-10-14: breathing exercise is now a working timed session (Flight Attendant and Pilot), toolkit cards are tappable, and the demo page is instrumented with Microsoft Clarity.
+- ~~Stale "Product Owner, Reservations" references~~ — 2026-10-14: footer and README reworded to apply to Delta Product Owner roles generally.
+- ~~"Nothing recorded" wording could read as contradicting the demo page's analytics~~ — 2026-10-14: scoped the claim to the app, and added a disclosure to the footer and README.
 - ~~GitHub Pages not enabled, live prototype link 404'd~~ — enabled 2026-10-12, confirmed live at `serrayon.github.io/delta-wellness-app/prototype/`
 - ~~Wireframes — style/depth decision~~ — decided 2026-10-12: keep the plain low-fidelity box style as-is, no restyle or annotations needed.
 - ~~Definition of Done doc~~ — written, see `docs/definition-of-done.md`

@@ -2,7 +2,7 @@
 
 **A 100% anonymous, offline-first mental health and resilience app for airline flight crew.**
 
-Portfolio case study built for Delta Air Lines — *Product Owner, Reservations*. Demonstrates the full product-ownership loop this role requires: translating an operational pain point into product vision, scoping an MVP under real constraints, writing build-ready user stories and acceptance criteria, and defining the metrics that prove it worked.
+Portfolio case study built for Delta Air Lines Product Owner roles. Demonstrates the full product-ownership loop this role requires: translating an operational pain point into product vision, scoping an MVP under real constraints, writing build-ready user stories and acceptance criteria, and defining the metrics that prove it worked.
 
 > 🔗 **[Try the interactive prototype →](https://serrayon.github.io/delta-wellness-app/prototype/)**
 > *(If the link isn't live yet, see "Getting Started" below to preview it another way.)*
@@ -65,7 +65,11 @@ All three personas defined in the product vision now have a full 6-panel storybo
 
 ## Why This Project, For This Role
 
-The Delta Reservations Experience Design & Technology team owns AI-enabled, automation-driven employee and customer experience — this project is the same discipline (backlog ownership, build-ready requirements, agile delivery, data-informed prioritization) applied to a different internal customer: flight crew instead of reservations agents. It's built to show the work, not just describe it.
+Delta's technology teams own AI-enabled, data-informed employee and customer digital experiences, including crew-facing platforms. This project applies the same discipline (backlog ownership, build-ready requirements, agile delivery, data-informed prioritization) to a specific internal customer: flight crew. It's built to show the work, not just describe it.
+
+## Analytics & Privacy Note
+
+The **demo page** (`prototype/index.html`) uses [Microsoft Clarity](https://clarity.microsoft.com) to collect anonymous usage analytics (session replays and heatmaps), so I can observe how real visitors move through the walkthrough. This is separate from the **CrewAnchor app concept**, which is designed to collect no data at all: no login, no identifiers, nothing recoverable. Measuring a product without breaking that promise is itself one of the open product questions; see `KNOWN_ISSUES.md`.
 
 ---
 *Built as a portfolio project. Not an official Delta Air Lines product.*

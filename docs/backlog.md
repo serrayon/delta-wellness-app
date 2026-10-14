@@ -14,7 +14,7 @@ Acceptance Criteria:
 
 Acceptance Criteria:
 1. From app launch, the "Breathe & Box" / "IRROPS Grounding" action is reachable in a single tap — no intermediate screen, login, or confirmation dialog.
-2. The exercise begins playback/animation within 500ms of tap on a cold app start.
+2. Once the app is open, the exercise begins playback/animation within 500ms of the tap. Cold launch to a usable home screen targets under 3 seconds on a mid-range device; if launch takes longer, a lightweight launch screen appears immediately so the user knows the app is loading.
 3. A visible countdown/timer is present for the full duration of the exercise so the user can judge, mid-exercise, whether they have time to finish before boarding.
 
 **US-103 — Session Interrupt Handling**
@@ -62,7 +62,7 @@ Acceptance Criteria:
 
 Acceptance Criteria:
 1. Posting requires no identity field of any kind; posts are attributed only to a randomly generated, non-reversible session label (e.g., "Crew-4821") that resets periodically.
-2. Message length is capped (e.g., 280 characters) and content is filtered against a moderation wordlist before being queued for sync.
+2. Message length is capped (e.g., 280 characters), and content passes the first stage of the moderation pipeline defined in US-303 (an on-device keyword check) before being queued for sync.
 3. A post made while offline is queued locally and clearly marked "Pending — will send when connected," never silently dropped.
 
 **US-302 — Opportunistic Sync, Never Blocking**
@@ -77,7 +77,7 @@ Acceptance Criteria:
 > As a crew member reading the board, I want assurance that posts are moderated, so that the space stays safe and doesn't become a liability or a source of additional stress.
 
 Acceptance Criteria:
-1. All posts pass through an automated keyword/toxicity filter before being visible to other users; flagged posts are held for review rather than published.
+1. Moderation is a two-stage pipeline: an on-device keyword check before a post is queued (US-301), then an automated toxicity filter before the post is visible to other users. Flagged posts are held for review rather than published.
 2. Users can report a visible post in one tap; a reported post is hidden from that reporting user's view immediately, pending review.
 3. No report or moderation action is ever linked back to a real identity — moderation operates only on the anonymous session label.
 

@@ -6,7 +6,7 @@ A roadmap is a sequencing argument, not a date-filled Gantt chart — the actual
 **Goal:** Prove the core "panic-to-grounded" loop actually works and earns crew trust before building anything else on top of it.
 - Offline-First Tactical Breathing Engine
 - Zero-Data Privacy Vault
-- Anonymous Peer-to-Peer Bulletin Board (with on-device moderation classifier — see `backlog.md` US-303)
+- Anonymous Peer-to-Peer Bulletin Board (with automated keyword/toxicity filtering and one-tap reporting — see `backlog.md` US-303)
 
 *Why first:* everything else in this roadmap is worthless if the core promise — works offline, works anonymously, works in under 4 minutes — doesn't hold up. No amount of added features fixes a broken foundation, and trust lost early (a privacy leak, a crash in airplane mode) is expensive to earn back with this user.
 
@@ -22,7 +22,7 @@ A roadmap is a sequencing argument, not a date-filled Gantt chart — the actual
 ## Later — Under Evaluation, Not Committed
 **Goal:** Ideas worth tracking, deliberately not yet scoped, because scoping them now would be guessing ahead of real usage data.
 - **Scheduled 1:1 Peer Chat** — cut from MVP for connectivity/anonymity reasons (see `mvp-scope.md`); revisit only if the bulletin board shows demand for deeper connection than anonymous posts provide
-- **On-device pattern-based content suggestions** — evaluated and intentionally *not* committed; see `product-vision.md`'s AI/automation framing for why a cloud-based version was rejected outright, and why even an on-device version needs real MVP usage data before it's worth building
+- **On-device pattern-based content suggestions** — evaluated and intentionally *not* committed; the cloud-based version of personalization was cut outright for conflicting with the Zero-Data Privacy Vault (see the Phase 2 table in `mvp-scope.md`), and even an on-device version needs real MVP usage data before it's worth building
 - **Mood tracking / journaling history** — cut from MVP as "not an in-the-moment tool"; would need its own privacy model work before Phase 3, since trend data is inherently more identifying than a single anonymous session
 
 ## What's Explicitly Not on This Roadmap

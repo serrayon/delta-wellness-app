@@ -402,8 +402,8 @@
       <div class="status-bar"><span>9:42</span><span>✈︎ No Service</span></div>
       <div class="screen-body" style="justify-content:center;">
         <div class="offline-banner">Airplane Mode Active — Fully Operational Offline</div>
-        <div class="breathe-ring" id="breatheRing"><span id="breatheLabel">Tap to Begin</span></div>
-        <div class="timer" id="breatheTimer">0:47 remaining</div>
+        <div class="breathe-ring" data-seconds="47"><span>Tap to Begin</span></div>
+        <div class="timer">0:47 remaining</div>
       </div>
     </div>
 
@@ -551,7 +551,7 @@
       <div class="status-bar"><span>22:42</span><span>✈︎ No Service</span></div>
       <div class="screen-body" style="justify-content:center;">
         <div class="offline-banner">Zero-Data Privacy Vault — nothing recorded, ever</div>
-        <div class="breathe-ring"><span>Breathe Out</span></div>
+        <div class="breathe-ring" data-seconds="70"><span>Tap to Begin</span></div>
         <div class="timer">1:10 remaining</div>
       </div>
     </div>
@@ -689,46 +689,46 @@
   // Panel 4: a real, tappable breathing exercise (not just a narrative caption) —
   // gives behavioral analytics tools (e.g. Clarity) a genuine interaction and
   // dwell-time signal to observe, instead of only "clicked next."
-  const breatheRing = document.getElementById('breatheRing');
-  const breatheLabel = document.getElementById('breatheLabel');
-  const breatheTimer = document.getElementById('breatheTimer');
-  let breatheInterval = null;
-  let breatheRunning = false;
-
   function formatTime(totalSeconds){
     const m = Math.floor(totalSeconds / 60);
     const s = totalSeconds % 60;
     return `${m}:${String(s).padStart(2, '0')}`;
   }
 
-  function startBreathing(){
-    if (breatheRunning) return;
-    breatheRunning = true;
-    let secondsLeft = 47;
-    let phaseIn = true;
-    breatheRing.classList.add('breathing');
-    breatheLabel.textContent = 'Breathe In';
-    breatheTimer.textContent = `${formatTime(secondsLeft)} remaining`;
+  // Each breathing ring runs its own session; works for every persona that has one.
+  document.querySelectorAll('.breathe-ring').forEach(ring => {
+    const label = ring.querySelector('span');
+    const timer = ring.parentElement.querySelector('.timer');
+    const total = Number(ring.dataset.seconds) || 47;
+    let running = false;
 
-    breatheInterval = setInterval(() => {
-      secondsLeft--;
-      if (secondsLeft > 0) {
-        breatheTimer.textContent = `${formatTime(secondsLeft)} remaining`;
-        if (secondsLeft % 4 === 0) {
-          phaseIn = !phaseIn;
-          breatheLabel.textContent = phaseIn ? 'Breathe In' : 'Breathe Out';
+    ring.addEventListener('click', () => {
+      if (running) return;
+      running = true;
+      let secondsLeft = total;
+      let phaseIn = true;
+      ring.classList.add('breathing');
+      label.textContent = 'Breathe In';
+      timer.textContent = `${formatTime(secondsLeft)} remaining`;
+
+      const tick = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft > 0) {
+          timer.textContent = `${formatTime(secondsLeft)} remaining`;
+          if ((total - secondsLeft) % 4 === 0) {
+            phaseIn = !phaseIn;
+            label.textContent = phaseIn ? 'Breathe In' : 'Breathe Out';
+          }
+        } else {
+          clearInterval(tick);
+          running = false;
+          ring.classList.remove('breathing');
+          label.textContent = 'Complete ✓';
+          timer.textContent = 'Session complete';
         }
-      } else {
-        clearInterval(breatheInterval);
-        breatheRunning = false;
-        breatheRing.classList.remove('breathing');
-        breatheLabel.textContent = 'Complete ✓';
-        breatheTimer.textContent = 'Session complete';
-      }
-    }, 1000);
-  }
-
-  breatheRing.addEventListener('click', startBreathing);
+      }, 1000);
+    });
+  });
 
   render();
 </script>

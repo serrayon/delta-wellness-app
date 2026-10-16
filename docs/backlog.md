@@ -29,13 +29,13 @@ Acceptance Criteria:
 
 ### Epic 2: Zero-Data Privacy Vault
 
-**US-201: No-Identity Onboarding**
-> As a new user, I want to start using the app without creating an account tied to my identity, so that I can trust the tool before I trust the company with any data.
+**US-201: Sign In Without Being Tracked**
+> As a crew member, I want to access the app through my existing company sign-in (SSO) without a separate account or extra form, so that getting in is effortless and I'm not handing over new personal data just to start.
 
 Acceptance Criteria:
-1. The app is fully functional on first launch with zero required sign-up fields (no name, email, employee ID, or phone number collected).
-2. No network call containing a device identifier, IP-linkable token, or advertising ID is made during onboarding.
-3. All generated local state (streaks, preferences) is created with a random, non-reversible local identifier that never leaves the device.
+1. The app authenticates via the company's existing SSO; no separate sign-up form, and no additional personal fields (phone number, personal email) are collected beyond what SSO already provides.
+2. No in-app usage event, which screens opened, which exercises used, how long, is transmitted or logged with a user-identifying token.
+3. All generated local state (streaks, preferences) stays device-local and is never synced to a server against the user's identity.
 
 **US-202: On-Device Encrypted Storage**
 > As a user, I want my usage history stored only on my device and encrypted at rest, so that no one, including Delta, can recover what I used the app for.
@@ -46,18 +46,18 @@ Acceptance Criteria:
 3. Uninstalling the app permanently and irrecoverably deletes all local state; there is no server-side backup to restore from, by design.
 
 **US-203: Clear Privacy Disclosure**
-> As a crew member evaluating whether to trust this tool, I want a plain-language explanation of exactly what is and isn't collected, so that I don't have to take "anonymous" on faith.
+> As a crew member evaluating whether to trust this tool, I want a plain-language explanation of exactly what is and isn't collected, so that I don't have to take "we don't track usage" on faith.
 
 Acceptance Criteria:
 1. A "What we collect" screen is reachable from the home screen in one tap and uses plain language, not legal boilerplate, as the primary explanation.
-2. The disclosure explicitly states what is never collected (name, employee ID, GPS location, device identifiers) in addition to what is stored locally.
+2. The disclosure states plainly that sign-in uses the crew member's existing company credentials, but that no in-app usage activity, exercises used, time spent, screens opened, is logged, stored centrally, or reviewable by Delta.
 3. The screen is static content bundled with the app (no network fetch required) so it's available offline and can't be silently changed server-side without an app update.
 
 ---
 
-### Epic 3: Anonymous Peer-to-Peer Bulletin Board
+### Epic 3: Peer-to-Peer Bulletin Board
 
-**US-301: Anonymous Posting**
+**US-301: Post Under a Display Label, Not Your Name**
 > As a delayed crew member, I want to post a short message to other crew without revealing who I am, so that I can feel supported without any risk to my professional record.
 
 Acceptance Criteria:
@@ -79,7 +79,7 @@ Acceptance Criteria:
 Acceptance Criteria:
 1. Moderation is a two-stage pipeline: an on-device keyword check before a post is queued (US-301), then an automated toxicity filter before the post is visible to other users. Flagged posts are held for review rather than published.
 2. Users can report a visible post in one tap; a reported post is hidden from that reporting user's view immediately, pending review.
-3. No report or moderation action is ever linked back to a real identity; moderation operates only on the anonymous session label.
+3. No report or moderation action is ever linked back to a crew member's real identity in a way visible to other users; moderation operates only on the display label.
 
 ---
 

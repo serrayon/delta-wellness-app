@@ -1,6 +1,6 @@
 # CrewAnchor
 
-**A 100% anonymous, offline-first mental health and resilience app for airline flight crew.**
+**A privacy-conscious, offline-first mental health and resilience app for airline flight crew: signed in with your existing company credentials, with nothing you do inside the app ever logged.**
 
 Portfolio case study built for Delta Air Lines Product Owner roles. Demonstrates the full product-ownership loop: translating an operational pain point into product vision, scoping an MVP under real constraints, writing build-ready user stories and acceptance criteria, and defining the metrics that prove it worked.
 
@@ -31,15 +31,15 @@ Flight crew operate inside a uniquely high-stress environment most consumer ment
 
 ## The Product
 
-CrewAnchor meets a crew member in the exact 2–4 minute window they actually have between boarding calls, works with **zero network dependency**, and never asks for anything that could identify them. Three MVP capabilities, each chosen because it survives the worst case (no signal, no time, no willingness to create a paper trail):
+CrewAnchor meets a crew member in the exact 2–4 minute window they actually have between boarding calls, works with **zero network dependency**, and never logs what they do inside it. Access is gated by the company's existing SSO, that's realistic for an internal tool, but your in-app activity is never recorded, tracked, or reviewable. Three MVP capabilities, each chosen because it survives the worst case (no signal, no time, no willingness to create a paper trail):
 
 1. **Offline-First Tactical Breathing Engine**: guided grounding exercises that run entirely from cached local assets
-2. **Zero-Data Privacy Vault**: no login, no employee ID, nothing recoverable by the company, ever
-3. **Anonymous Peer-to-Peer Bulletin Board**: lightweight, moderated, identity-stripped solidarity messages from other crew
+2. **Zero-Data Privacy Vault**: SSO sign-in to access the app, but nothing you do inside it, which exercises, how often, when, is ever logged or recoverable
+3. **Peer-to-Peer Bulletin Board**: lightweight, moderated messages from other crew, posted under a display label, not your real name, so what you say to peers stays between you and them
 
 ## The Storyboard
 
-A flight attendant (Sarah) hits an IRROPS trigger, opens the app in a quiet galley corner, selects "IRROPS Grounding," completes an offline breathing exercise, sees an anonymous peer message, and returns to the cabin grounded, in under 3 minutes. Walk through it yourself in the [interactive prototype](./prototype/index.html).
+A flight attendant (Sarah) hits an IRROPS trigger, opens the app in a quiet galley corner, selects "IRROPS Grounding," completes an offline breathing exercise, sees a peer message posted under a display label, and returns to the cabin grounded, in under 3 minutes. Walk through it yourself in the [interactive prototype](./prototype/index.html).
 
 ## Product Artifacts
 
@@ -73,7 +73,7 @@ It is a portfolio piece, so I tried to show the work, not just describe it.
 
 ## Analytics & Privacy Note
 
-The **demo page** (`prototype/index.html`) uses [Microsoft Clarity](https://clarity.microsoft.com) to collect anonymous usage analytics (session replays and heatmaps), so I can observe how real visitors move through the walkthrough. This is separate from the **CrewAnchor app concept**, which is designed to collect no data at all: no login, no identifiers, nothing recoverable. Measuring a product without breaking that promise is itself one of the open product questions; see `KNOWN_ISSUES.md`.
+The **demo page** (`prototype/index.html`) uses [Microsoft Clarity](https://clarity.microsoft.com) to collect anonymous usage analytics (session replays and heatmaps), so I can observe how real visitors move through the walkthrough. This is separate from the **CrewAnchor app concept**, which requires company sign-in to access but is designed to never log in-app usage activity. Measuring a product without breaking that promise is itself one of the open product questions; see `KNOWN_ISSUES.md`.
 
 ---
 *Built as a portfolio project. Not an official Delta Air Lines product.*

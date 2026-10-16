@@ -4,11 +4,11 @@
 Flight crew (flight attendants and pilots) operate inside a uniquely high-stress environment that most consumer mental health apps don't account for: irregular operations (IRROPS), unpredictable schedule changes, time zone exhaustion, forced proximity to the public during personal distress, and anxiety around FAA/company reporting requirements. Existing resources (EAPs, generic meditation apps) are either hard to access mid-shift, require connectivity crew don't have on the tarmac or in-flight, or feel disconnected from the realities of the job.
 
 ## Vision Statement
-CrewAnchor is a 100% anonymous, offline-first mental health and resilience tool built specifically for aviation crew, designed to meet a crew member in the exact 2–4 minute window they actually have between boarding calls, deliver immediate grounding support with zero dependency on connectivity, and reconnect them to a peer community that understands the job without ever compromising their anonymity or their employment record.
+CrewAnchor is a privacy-conscious, offline-first mental health and resilience tool built specifically for aviation crew: accessed through the crew member's existing company sign-in (realistic for an internal tool), but designed so nothing they do inside it is ever logged. It meets a crew member in the exact 2–4 minute window they actually have between boarding calls, delivers immediate grounding support with zero dependency on connectivity, and reconnects them to a peer community that understands the job without ever putting their employment record at risk.
 
 ## Why This, Why Now
 - Crew are an internal customer group that most employee-experience tooling serves poorly. They work offline, on unpredictable schedules, and under constant reporting pressure. CrewAnchor is built for that gap.
-- Delta's own benefits language ("Holistic Wellbeing programs... extensive resources supporting mental health") signals organizational appetite for crew-facing wellness tooling, but EAP-style resources are rarely designed around the operational constraints (offline, anonymous, under 5 minutes) that make a tool actually usable in the moment.
+- Delta's own benefits language ("Holistic Wellbeing programs... extensive resources supporting mental health") signals organizational appetite for crew-facing wellness tooling, but EAP-style resources are rarely designed around the operational constraints (offline, no usage logging, under 5 minutes) that make a tool actually usable in the moment.
 
 ## Target Users
 | Persona | Need |
